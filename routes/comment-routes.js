@@ -7,19 +7,59 @@ const Comment = require('../models/comment-model');
 const User = require('../models/user-model');
 
 router.post('/comment', (req, res, next) => {
-  Comment.create();
-});
+  const { content } = req.body;
+  const tip = req.body.ChristmasTipID;
+  const author = req.user._id;
 
-router.get('/comment', (req, res, next) => {
-  Comment.find();
+  Comment.create({
+    content,
+    author,
+    tip,
+  })
+    .then((newComment) => {
+      User.findByIdAndUpdate(author, {
+        $push: { comments: newComment._id },
+      });
+    })
+    .then((newComment) => {
+      ChristmasTip.findByIdAndUpdate(tip, {
+        $push: { comments: newComment._id },
+      });
+    })
+    .then((newTip) => res.json(newTip))
+    .catch((error) => res.json(error));
 });
 
 router.put('/comment/:id', (req, res, next) => {
-  Comment.findOneAndUpdate();
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400).json({ message: 'Specified id is not valid' });
+    return;
+  }
+  const { id } = req.params;
+  const { content } = req.body;
+
+  Comment.findOneAndUpdate(id, {
+    content,
+  })
+    .then((updatedComment) => {
+      res.status(200).json(updatedComment);
+    })
+    .catch((error) => res.json(error));
 });
 
 router.delete('/comment/:id', (req, res, next) => {
-  Comment.findOneAndRemove();
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400).json({ message: 'Specified id is not valid' });
+    return;
+  }
+
+  const { id } = req.params;
+
+  Comment.findOneAndRemove(id)
+    .then(() => {
+      res.json({ message: 'Comment is successfully removed' });
+    })
+    .catch((error) => res.json(error));
 });
 
 module.exports = router;

@@ -4,11 +4,15 @@ const { Schema, model } = mongoose;
 const christmasTipSchema = new Schema(
   {
     title: { type: String, required: true },
-    author: { type: Schema.Types.ObjectId, ref: 'User' },
+    //author: { type: Schema.Types.ObjectId, ref: 'User' },
     content: { type: String, required: true },
     picture: String,
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
-    addedToFavorites: Number
+    addedToFavorites: Number,
+    category: {
+      type: String,
+      enumValues: ['Gifts', 'Food', 'Decoration', 'Charity', 'Other'],
+    },
   },
   {
     timestamps: true,

@@ -2,60 +2,90 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 
-const ChristmasTip = require('../models/christmas-tip-model')
-const Comment = require('../models/comment-model')
-const User = require('../models/user-model')
-
-
+const ChristmasTip = require('../models/christmas-tip-model');
+const User = require('../models/user-model');
 
 router.post('/tips', (req, res, next) => {
-const {title, content, picture} = req.body,
-
-const author = req.user._id
+  const { title, content, picture, category } = req.body;
+  const author = req.user._id;
 
   ChristmasTip.create({
     title,
     content,
     picture,
+    category,
     author,
     comments: [],
-    addedToFavorites: 0
+    addedToFavorites: 0,
   })
-  .then((newTip) =>
-  {res.json(newTip)})
-  .catch((error) => next(error));
-})
+    .then((newTip) => {
+      User.findByIdAndUpdate(author, {
+        $push: { tips: newTip._id },
+      });
+    })
+    .then((newTip) => res.json(newTip))
+    .catch((error) => res.json(error));
+});
 
 router.get('/tips', (req, res, next) => {
-
-ChristmasTip.find()
-  .populate('author')
-  .then((allTips) => {
-  res.json(allTips)
+  ChristmasTip.find()
+    .populate('author')
+    .then((allTips) => {
+      res.json(allTips);
     })
-  .catch((error) => next(error));
-})
+    .catch((error) => res.json(error));
+});
 
 router.get('/tips/:id', (req, res, next) => {
-  const { id } = req.params.id
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400).json({ message: 'Specified id is not valid' });
+    return;
+  }
+  const { id } = req.params.id;
 
-ChristmasTip.findOne(id)
-  .populate('author')
-  .populate('comments')
-  .then((foundTip) => {
-    res.json(foundTip)
+  ChristmasTip.findOne(id)
+    .populate('author')
+    .populate('comments')
+    .then((foundTip) => {
+      res.status(200).json(foundTip);
+    })
+    .catch((error) => res.json(error));
+});
+
+router.put('/tips/:id', (req, res, next) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400).json({ message: 'Specified id is not valid' });
+    return;
+  }
+
+  const { title, content, picture, category } = req.body;
+  const { id } = req.params;
+
+  ChristmasTip.findOneAndUpdate(id, {
+    title,
+    content,
+    picture,
+    category,
   })
-  .catch((error) => next(error));
+    .then((updatedTip) => {
+      res.status(200).json(updatedTip);
+    })
+    .catch((error) => res.json(error));
+});
 
-})
+router.delete('/tips/:id', (req, res, next) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400).json({ message: 'Specified id is not valid' });
+    return;
+  }
+  //TO DO: DELETE FROM USER ARRAY AND DELETE COMMENTS FROM DB
+  const { id } = req.params;
 
-router.put('/tips/:id', (req,res, next) => {
-ChristmasTip.findOneAndUpdate()
-})
-
-router.delete('/tips/:id', (req,res, next) => {
-ChristmasTip.findOneAndRemove()
-})
-
+  ChristmasTip.findOneAndRemove(id)
+    .then(() => {
+      res.json({ message: 'Tip is successfully removed' });
+    })
+    .catch((error) => res.json(error));
+});
 
 module.exports = router;

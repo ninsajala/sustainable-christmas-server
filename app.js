@@ -18,8 +18,8 @@ const debug = require('debug')(
 
 const app = express();
 
-require('./configs/session.config')(app);
-require('./configs/passport.config');
+require('./configs/session-config')(app);
+require('./configs/passport-config');
 
 // Middleware Setup
 app.use(logger('dev'));
@@ -63,6 +63,12 @@ app.use('/', tips);
 
 const comments = require('./routes/comment-routes');
 app.use('/', comments);
+
+const auth = require('./routes/auth-routes');
+app.use('/', auth);
+
+const fileUpload = require('./routes/file-upload-routes');
+app.use('/', fileUpload);
 
 // const user = require('./routes/user-routes');
 // app.use('/', user)

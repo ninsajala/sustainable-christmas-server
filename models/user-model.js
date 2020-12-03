@@ -7,13 +7,11 @@ const userSchema = new Schema(
     passwordHash: { type: String, required: true },
     firstName: String,
     lastName: String,
-    favorites: [String],
-    tips: [{ type: Schema.Types.ObjectId, ref: 'ChristmasTip' }],
-    profilePictureUrl: {
-      type: String,
-    },
-    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
     about: String,
+    picture: String,
+    favorites: [{ type: Schema.Types.ObjectId, ref: 'ChristmasTip' }],
+    tips: [{ type: Schema.Types.ObjectId, ref: 'ChristmasTip' }],
+    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
   },
   {
     timestamps: true,

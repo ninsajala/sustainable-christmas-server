@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const passport = require('passport');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 const User = require('../models/user-model');
 
@@ -57,11 +57,18 @@ router.post('/signup', (req, res, next) => {
     }
 
     const salt = bcrypt.genSaltSync(10);
-    const xc = bcrypt.hashSync(password, salt);
+    const hashedPassword = bcrypt.hashSync(password, salt);
 
     const newUser = new User({
       email,
-      passwordHash: passwordHash,
+      passwordHash: hashedPassword,
+      firstName,
+      lastName,
+      about: '',
+      picture: '',
+      favorites: [],
+      tips: [],
+      comments: [],
     });
 
     newUser.save((err) => {
@@ -82,6 +89,44 @@ router.post('/signup', (req, res, next) => {
       });
     });
   });
+});
+
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', (err, theUser, failureDetails) => {
+    if (err) {
+      res
+        .status(500)
+        .json({ message: 'Something went wrong authenticating user' });
+      return;
+    }
+
+    if (!theUser) {
+      res.status(401).json(failureDetails);
+      return;
+    }
+
+    req.login(theUser, (err) => {
+      if (err) {
+        res.status(500).json({ message: 'Session could not be saved' });
+        return;
+      }
+
+      res.status(200).json(theUser);
+    });
+  })(req, res, next);
+});
+
+router.post('/logout', (req, res, next) => {
+  req.logout();
+  res.status(200).json({ message: 'Logged out successfully' });
+});
+
+router.get('/loggedin', (req, res, next) => {
+  if (req.isAuthenticated()) {
+    res.status(200).json(req.user);
+    return;
+  }
+  res.status(403).json({ message: 'Unauthorized' });
 });
 
 module.exports = router;

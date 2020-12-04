@@ -30,23 +30,6 @@ router.post('/comment', (req, res, next) => {
     .catch((error) => res.json(error));
 });
 
-router.put('/comment/:id', (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    res.status(400).json({ message: 'Specified id is not valid' });
-    return;
-  }
-  const { id } = req.params;
-  const { content } = req.body;
-
-  Comment.findOneAndUpdate(id, {
-    content,
-  })
-    .then((updatedComment) => {
-      res.status(200).json(updatedComment);
-    })
-    .catch((error) => res.json(error));
-});
-
 router.delete('/comment/:id', (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     res.status(400).json({ message: 'Specified id is not valid' });

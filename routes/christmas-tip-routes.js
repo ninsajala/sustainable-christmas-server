@@ -61,12 +61,16 @@ router.put('/tips/:id', (req, res, next) => {
   const { title, content, picture, category } = req.body;
   const { id } = req.params;
 
-  ChristmasTip.findOneAndUpdate(id, {
-    title,
-    content,
-    picture,
-    category,
-  })
+  ChristmasTip.findOneAndUpdate(
+    id,
+    {
+      title,
+      content,
+      picture,
+      category,
+    },
+    { new: true }
+  )
     .then((updatedTip) => {
       res.status(200).json(updatedTip);
     })

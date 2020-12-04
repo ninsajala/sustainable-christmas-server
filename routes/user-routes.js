@@ -25,15 +25,26 @@ router.put('/user/:id', (req, res, next) => {
     return;
   }
 
-  const { firstName, lastName, about, picture } = req.body;
+  const { firstName, lastName, about, picture, pictureOld } = req.body;
   const { id } = req.params;
 
-  User.findOneAndUpdate(id, {
-    firstName,
-    lastName,
-    about,
-    picture,
-  })
+  let newPicture;
+  if (!picture) {
+    newPicture = pictureOld;
+  } else {
+    newPicture = picture;
+  }
+
+  User.findOneAndUpdate(
+    id,
+    {
+      firstName,
+      lastName,
+      about,
+      picture: newPicture,
+    },
+    { new: true }
+  )
     .then((updatedUser) => {
       res.status(200).json(updatedUser);
     })

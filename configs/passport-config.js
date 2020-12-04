@@ -30,6 +30,7 @@ passport.use(
       })
         .populate('tips')
         .populate('comments')
+        .populate('favorites')
         .then((user) => {
           if (!user) {
             return next(null, false, {

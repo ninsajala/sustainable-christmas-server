@@ -7,8 +7,9 @@ const christmasTipSchema = new Schema(
     author: { type: Schema.Types.ObjectId, ref: 'User' },
     content: { type: String, required: true },
     picture: String,
+    extraInfo: String,
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
-    addedToFavorites: Number,
+    addedToFavorites: [],
     category: {
       type: String,
       enumValues: ['Gifts', 'Food', 'Decoration', 'Charity', 'Other'],

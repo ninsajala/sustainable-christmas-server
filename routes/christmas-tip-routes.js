@@ -6,9 +6,8 @@ const ChristmasTip = require('../models/christmas-tip-model');
 const User = require('../models/user-model');
 
 router.post('/tips', (req, res, next) => {
-  const { title, content, picture, category } = req.body;
-  const author = req.user._id;
-
+  const { title, content, picture, category, author } = req.body;
+  let tipId;
   ChristmasTip.create({
     title,
     content,
@@ -16,14 +15,17 @@ router.post('/tips', (req, res, next) => {
     category,
     author,
     comments: [],
-    addedToFavorites: 0,
+    addedToFavorites: [],
   })
     .then((newTip) => {
+      tipId = newTip._id;
+    })
+    .then(() => {
       User.findByIdAndUpdate(author, {
-        $push: { tips: newTip._id },
+        $push: { tips: tipId },
       });
     })
-    .then((newTip) => res.json(newTip))
+    .then(() => Tips.findById(tipId).then((foundTip) => res.json(foundTip)))
     .catch((error) => res.json(error));
 });
 
@@ -41,13 +43,13 @@ router.get('/tips/:id', (req, res, next) => {
     res.status(400).json({ message: 'Specified id is not valid' });
     return;
   }
-  const { id } = req.params.id;
+  const { id } = req.params;
 
-  ChristmasTip.findOne(id)
+  ChristmasTip.findById(id)
     .populate('author')
     .populate('comments')
     .then((foundTip) => {
-      res.status(200).json(foundTip);
+      res.json(foundTip);
     })
     .catch((error) => res.json(error));
 });
@@ -61,12 +63,16 @@ router.put('/tips/:id', (req, res, next) => {
   const { title, content, picture, category } = req.body;
   const { id } = req.params;
 
-  ChristmasTip.findOneAndUpdate(id, {
-    title,
-    content,
-    picture,
-    category,
-  })
+  ChristmasTip.findByIdAndUpdate(
+    id,
+    {
+      title,
+      content,
+      picture,
+      category,
+    },
+    { new: true }
+  )
     .then((updatedTip) => {
       res.status(200).json(updatedTip);
     })
@@ -81,7 +87,7 @@ router.delete('/tips/:id', (req, res, next) => {
   //TO DO: DELETE FROM USER ARRAY AND DELETE COMMENTS FROM DB
   const { id } = req.params;
 
-  ChristmasTip.findOneAndRemove(id)
+  ChristmasTip.findByIdAndRemove(id)
     .then(() => {
       res.json({ message: 'Tip is successfully removed' });
     })

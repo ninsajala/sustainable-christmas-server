@@ -7,9 +7,8 @@ const Comment = require('../models/comment-model');
 const User = require('../models/user-model');
 
 router.post('/comment', (req, res, next) => {
-  const { content } = req.body;
-  const tip = req.body.ChristmasTipID;
-  const author = req.user._id;
+  const { content, tip, author } = req.body;
+  let commentID;
 
   Comment.create({
     content,
@@ -17,33 +16,31 @@ router.post('/comment', (req, res, next) => {
     tip,
   })
     .then((newComment) => {
-      User.findByIdAndUpdate(author, {
-        $push: { comments: newComment._id },
-      });
+      commentID = newComment._id;
     })
-    .then((newComment) => {
-      ChristmasTip.findByIdAndUpdate(tip, {
-        $push: { comments: newComment._id },
-      });
-    })
-    .then((newTip) => res.json(newTip))
-    .catch((error) => res.json(error));
-});
-
-router.put('/comment/:id', (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    res.status(400).json({ message: 'Specified id is not valid' });
-    return;
-  }
-  const { id } = req.params;
-  const { content } = req.body;
-
-  Comment.findOneAndUpdate(id, {
-    content,
-  })
-    .then((updatedComment) => {
-      res.status(200).json(updatedComment);
-    })
+    .then(() =>
+      ChristmasTip.findByIdAndUpdate(
+        tip,
+        {
+          $push: { comments: commentID },
+        },
+        { new: true }
+      )
+    )
+    .then(() =>
+      User.findByIdAndUpdate(
+        author,
+        {
+          $push: { comments: commentID },
+        },
+        { new: true }
+      )
+    )
+    .then(() =>
+      Comments.findById(id).then((foundComment) => {
+        res.json(foundComment);
+      })
+    )
     .catch((error) => res.json(error));
 });
 
@@ -55,7 +52,7 @@ router.delete('/comment/:id', (req, res, next) => {
 
   const { id } = req.params;
 
-  Comment.findOneAndRemove(id)
+  Comment.findByIdAndRemove(id)
     .then(() => {
       res.json({ message: 'Comment is successfully removed' });
     })

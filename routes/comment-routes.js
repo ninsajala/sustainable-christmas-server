@@ -8,6 +8,7 @@ const User = require('../models/user-model');
 
 router.post('/comment', (req, res, next) => {
   const { content, tip, author } = req.body;
+  let commentID;
 
   Comment.create({
     content,
@@ -15,16 +16,31 @@ router.post('/comment', (req, res, next) => {
     tip,
   })
     .then((newComment) => {
-      return User.findByIdAndUpdate(author, {
-        $push: { comments: newComment._id },
-      });
+      commentID = newComment._id;
     })
-    .then((newComment) => {
-      return ChristmasTip.findByIdAndUpdate(tip, {
-        $push: { comments: newComment._id },
-      });
-    })
-    .then((newComment) => res.json(newComment))
+    .then(() =>
+      ChristmasTip.findByIdAndUpdate(
+        tip,
+        {
+          $push: { comments: commentID },
+        },
+        { new: true }
+      )
+    )
+    .then(() =>
+      User.findByIdAndUpdate(
+        author,
+        {
+          $push: { comments: commentID },
+        },
+        { new: true }
+      )
+    )
+    .then(() =>
+      Comments.findById(id).then((foundComment) => {
+        res.json(foundComment);
+      })
+    )
     .catch((error) => res.json(error));
 });
 
@@ -36,7 +52,7 @@ router.delete('/comment/:id', (req, res, next) => {
 
   const { id } = req.params;
 
-  Comment.findOneAndRemove(id)
+  Comment.findByIdAndRemove(id)
     .then(() => {
       res.json({ message: 'Comment is successfully removed' });
     })

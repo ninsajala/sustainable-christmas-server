@@ -11,7 +11,7 @@ router.get('/user/:id', (req, res, next) => {
   }
   const { id } = req.params.id;
 
-  User.findOne(id)
+  User.findById(id)
     .populate('tips')
     .populate('comments')
     .populate('favorites')
@@ -37,7 +37,7 @@ router.put('/user/:id', (req, res, next) => {
     newPicture = picture;
   }
 
-  User.findOneAndUpdate(
+  User.findByIdAndUpdate(
     id,
     {
       firstName,
@@ -61,7 +61,7 @@ router.delete('/user/:id', (req, res, next) => {
   //TO DO: DELETE COMMENTS AND TIPS BY USER
   const { id } = req.params;
 
-  User.findOneAndRemove(id)
+  User.findByIdAndRemove(id)
     .then(() => {
       res.json({ message: 'Profile is successfully removed' });
     })

@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const router = express.Router();
 
 const User = require('../models/user-model');
+const ChristmasTip = require('../models/christmas-tip-model');
 
 router.get('/user/:id', (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -11,13 +12,33 @@ router.get('/user/:id', (req, res, next) => {
   }
   const { id } = req.params.id;
 
-  User.findById(id)
+  User.findOne(id)
     .populate('tips')
     .populate('comments')
     .populate('favorites')
     .then((foundUser) => {
+      console.log(foundUser);
       res.status(200).json(foundUser);
     })
+    .catch((error) => res.json(error));
+});
+
+router.put('/favorites', (req, res, next) => {
+  const { userId, tipId } = req.body;
+
+  User.findByIdAndUpdate(
+    userId,
+    {
+      $push: { favorites: tipId },
+    },
+    { new: true }
+  )
+    .then(() => {
+      ChristmasTip.findByIdAndUpdate(tipId, {
+        $push: { favorites: userId },
+      });
+    })
+    .then(() => res.json(`Successfully added to favorites`))
     .catch((error) => res.json(error));
 });
 

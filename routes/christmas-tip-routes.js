@@ -15,7 +15,7 @@ router.post('/tips', (req, res, next) => {
     category,
     author,
     comments: [],
-    addedToFavorites: 0,
+    addedToFavorites: [],
   })
     .then((newTip) => {
       tipId = newTip._id;

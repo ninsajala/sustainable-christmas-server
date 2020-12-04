@@ -17,7 +17,6 @@ passport.deserializeUser((userIdFromSession, cb) => {
   });
 });
 
-
 // Passport LocalStrategy
 passport.use(
   new LocalStrategy(
@@ -27,8 +26,10 @@ passport.use(
     },
     (email, password, next) => {
       User.findOne({
-        email
-      }, )
+        email,
+      })
+        .populate('tips')
+        .populate('comments')
         .then((user) => {
           if (!user) {
             return next(null, false, {

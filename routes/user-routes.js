@@ -13,6 +13,8 @@ router.get('/user/:id', (req, res, next) => {
 
   User.findOne(id)
     .populate('tips')
+    .populate('comments')
+    .populate('favorites')
     .then((foundUser) => {
       res.status(200).json(foundUser);
     })

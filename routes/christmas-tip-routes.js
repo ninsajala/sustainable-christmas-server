@@ -19,7 +19,7 @@ router.post('/tips', (req, res, next) => {
     addedToFavorites: 0,
   })
     .then((newTip) => {
-      User.findByIdAndUpdate(author, {
+      return User.findByIdAndUpdate(author, {
         $push: { tips: newTip._id },
       });
     })

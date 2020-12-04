@@ -7,9 +7,7 @@ const Comment = require('../models/comment-model');
 const User = require('../models/user-model');
 
 router.post('/comment', (req, res, next) => {
-  const { content } = req.body;
-  const tip = req.body.ChristmasTipID;
-  const author = req.user._id;
+  const { content, tip, author } = req.body;
 
   Comment.create({
     content,
@@ -17,16 +15,16 @@ router.post('/comment', (req, res, next) => {
     tip,
   })
     .then((newComment) => {
-      User.findByIdAndUpdate(author, {
+      return User.findByIdAndUpdate(author, {
         $push: { comments: newComment._id },
       });
     })
     .then((newComment) => {
-      ChristmasTip.findByIdAndUpdate(tip, {
+      return ChristmasTip.findByIdAndUpdate(tip, {
         $push: { comments: newComment._id },
       });
     })
-    .then((newTip) => res.json(newTip))
+    .then((newComment) => res.json(newComment))
     .catch((error) => res.json(error));
 });
 

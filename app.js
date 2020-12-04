@@ -70,7 +70,7 @@ app.use('/', auth);
 const fileUpload = require('./routes/file-upload-routes');
 app.use('/', fileUpload);
 
-// const user = require('./routes/user-routes');
-// app.use('/', user)
+const user = require('./routes/user-routes');
+app.use('/', user);
 
 module.exports = app;

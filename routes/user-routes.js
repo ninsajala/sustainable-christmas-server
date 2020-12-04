@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
 
-const ChristmasTip = require('../models/christmas-tip-model');
 const User = require('../models/user-model');
 
 router.get('/user/:id', (req, res, next) => {

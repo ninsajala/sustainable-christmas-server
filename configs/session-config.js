@@ -13,7 +13,7 @@ module.exports = (app) => {
       },
       store: new MongoStore({
         mongooseConnection: mongoose.connection,
-        ttl: 60 * 60 * 24,
+        ttl: 60000 * 60 * 24 * 14,
       }),
     })
   );

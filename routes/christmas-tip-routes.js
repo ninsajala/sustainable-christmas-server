@@ -6,7 +6,7 @@ const ChristmasTip = require('../models/christmas-tip-model');
 const User = require('../models/user-model');
 
 router.post('/tips', (req, res, next) => {
-  const { title, content, picture, category, author } = req.body;
+  const { title, content, picture, category, author, extraInfo } = req.body;
   let tipId;
   ChristmasTip.create({
     title,
@@ -14,6 +14,7 @@ router.post('/tips', (req, res, next) => {
     picture,
     category,
     author,
+    extraInfo,
     comments: [],
     addedToFavorites: [],
   })
@@ -60,16 +61,24 @@ router.put('/tips/:id', (req, res, next) => {
     return;
   }
 
-  const { title, content, picture, category } = req.body;
+  const { title, content, picture, pictureOld, category, extraInfo } = req.body;
   const { id } = req.params;
+
+  let newPicture;
+  if (!picture) {
+    newPicture = pictureOld;
+  } else {
+    newPicture = picture;
+  }
 
   ChristmasTip.findByIdAndUpdate(
     id,
     {
       title,
       content,
-      picture,
+      picture: newPicture,
       category,
+      extraInfo,
     },
     { new: true }
   )

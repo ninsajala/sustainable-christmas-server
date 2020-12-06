@@ -17,7 +17,6 @@ router.get('/user/:id', (req, res, next) => {
     .populate('comments')
     .populate('favorites')
     .then((foundUser) => {
-      console.log(foundUser);
       res.status(200).json(foundUser);
     })
     .catch((error) => res.json(error));

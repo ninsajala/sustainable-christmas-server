@@ -26,7 +26,12 @@ router.post('/tips', (req, res, next) => {
         $push: { tips: tipId },
       });
     })
-    .then(() => Tips.findById(tipId).then((foundTip) => res.json(foundTip)))
+    .then(() =>
+      Tips.findById(tipId).then((foundTip) => {
+        console.log(foundTip);
+        res.json(foundTip);
+      })
+    )
     .catch((error) => res.json(error));
 });
 

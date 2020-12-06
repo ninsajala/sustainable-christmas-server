@@ -41,6 +41,25 @@ router.put('/favorites', (req, res, next) => {
     .catch((error) => res.json(error));
 });
 
+router.put('/favorites/remove', (req, res, next) => {
+  const { userId, tipId } = req.body;
+
+  User.findByIdAndUpdate(
+    userId,
+    {
+      $pull: { favorites: tipId },
+    },
+    { new: true }
+  )
+    .then(() => {
+      ChristmasTip.findByIdAndUpdate(tipId, {
+        $pull: { favorites: userId },
+      });
+    })
+    .then(() => res.json(`Successfully removed from favorites`))
+    .catch((error) => res.json(error));
+});
+
 router.put('/user/:id', (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     res.status(400).json({ message: 'Specified id is not valid' });

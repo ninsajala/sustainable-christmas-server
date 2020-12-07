@@ -51,10 +51,28 @@ router.delete('/comment/:id', (req, res, next) => {
   }
 
   const { id } = req.params;
+  const { user, tip } = req.body;
 
-  Comment.findByIdAndRemove(id)
+  User.findByIdAndUpdate(
+    user,
+    {
+      $pull: { comments: id },
+    },
+    { new: true }
+  )
     .then(() => {
-      res.json({ message: 'Comment is successfully removed' });
+      ChristmasTip.findByIdAndUpdate(
+        tip,
+        {
+          $pull: { comments: id },
+        },
+        { new: true }
+      );
+    })
+    .then(() => {
+      Comment.findByIdAndRemove(id).then(() => {
+        res.json({ message: 'Comment is successfully removed' });
+      });
     })
     .catch((error) => res.json(error));
 });

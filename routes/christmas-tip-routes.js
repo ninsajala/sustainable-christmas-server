@@ -54,6 +54,13 @@ router.get('/tips/:id', (req, res, next) => {
   ChristmasTip.findById(id)
     .populate('author')
     .populate('comments')
+    .populate({
+      path: 'comments',
+      populate: {
+        path: 'author',
+        model: 'User',
+      },
+    })
     .then((foundTip) => {
       res.json(foundTip);
     })

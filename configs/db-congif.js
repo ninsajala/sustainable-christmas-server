@@ -6,6 +6,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
+    useFindAndModify: false,
   })
   .then(() =>
     console.log(`Successfully connected to the database ${MONGO_ATLAS_URI}`)

@@ -17,7 +17,6 @@ router.get('/user/:id', (req, res, next) => {
     .populate('comments')
     .populate('favorites')
     .then((foundUser) => {
-      console.log(foundUser);
       res.status(200).json(foundUser);
     })
     .catch((error) => res.json(error));
@@ -39,6 +38,25 @@ router.put('/favorites', (req, res, next) => {
       });
     })
     .then(() => res.json(`Successfully added to favorites`))
+    .catch((error) => res.json(error));
+});
+
+router.put('/favorites/remove', (req, res, next) => {
+  const { userId, tipId } = req.body;
+
+  User.findByIdAndUpdate(
+    userId,
+    {
+      $pull: { favorites: tipId },
+    },
+    { new: true }
+  )
+    .then(() => {
+      ChristmasTip.findByIdAndUpdate(tipId, {
+        $pull: { favorites: userId },
+      });
+    })
+    .then(() => res.json(`Successfully removed from favorites`))
     .catch((error) => res.json(error));
 });
 

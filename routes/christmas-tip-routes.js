@@ -22,8 +22,14 @@ router.post('/tips', (req, res, next) => {
       tipId = newTip._id;
     })
     .then(() => {
-      User.findByIdAndUpdate(author, {
-        $push: { tips: tipId },
+      User.findByIdAndUpdate(
+        author,
+        {
+          $push: { tips: tipId },
+        },
+        { new: true }
+      ).then((updatedUser) => {
+        console.log(updatedUser);
       });
     })
     .then(() =>

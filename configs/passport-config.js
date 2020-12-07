@@ -14,7 +14,9 @@ passport.deserializeUser((userIdFromSession, cb) => {
       return;
     }
     cb(null, userDocument);
-  });
+  })
+    .populate('tips')
+    .populate('favorites');
 });
 
 // Passport LocalStrategy

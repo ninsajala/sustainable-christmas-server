@@ -111,7 +111,7 @@ router.delete('/tips/:id', (req, res, next) => {
     res.status(400).json({ message: 'Specified id is not valid' });
     return;
   }
-  //TO DO: DELETE FROM USER ARRAY AND DELETE COMMENTS FROM DB
+
   const { id } = req.params;
 
   ChristmasTip.findByIdAndRemove(id)

@@ -49,30 +49,11 @@ router.delete('/comment/:id', (req, res, next) => {
     res.status(400).json({ message: 'Specified id is not valid' });
     return;
   }
-
   const { id } = req.params;
-  const { user, tip } = req.body;
 
-  User.findByIdAndUpdate(
-    user,
-    {
-      $pull: { comments: id },
-    },
-    { new: true }
-  )
+  Comment.findByIdAndRemove(id)
     .then(() => {
-      ChristmasTip.findByIdAndUpdate(
-        tip,
-        {
-          $pull: { comments: id },
-        },
-        { new: true }
-      );
-    })
-    .then(() => {
-      Comment.findByIdAndRemove(id).then(() => {
-        res.json({ message: 'Comment is successfully removed' });
-      });
+      res.json({ message: 'Comment is successfully removed' });
     })
     .catch((error) => res.json(error));
 });

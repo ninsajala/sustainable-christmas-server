@@ -32,7 +32,7 @@ router.put('/favorites/add', (req, res, next) => {
     },
     { new: true }
   )
-  .then(() => {
+    .then(() => {
       ChristmasTip.findByIdAndUpdate(
         tipId,
         {
@@ -65,7 +65,9 @@ router.put('/favorites/remove', (req, res, next) => {
           $pull: { addedToFavorites: userId },
         },
         { new: true }
-      );
+      ).then((updatedTip) => {
+        console.log(updatedTip);
+      });
     })
     .then(() => res.json(`Successfully removed from favorites`))
     .catch((error) => res.json(error));

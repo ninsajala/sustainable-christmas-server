@@ -49,7 +49,6 @@ router.delete('/comment/:id', (req, res, next) => {
     res.status(400).json({ message: 'Specified id is not valid' });
     return;
   }
-
   const { id } = req.params;
 
   Comment.findByIdAndRemove(id)

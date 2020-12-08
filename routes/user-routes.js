@@ -22,7 +22,7 @@ router.get('/user/:id', (req, res, next) => {
     .catch((error) => res.json(error));
 });
 
-router.put('/favorites', (req, res, next) => {
+router.put('/favorites/add', (req, res, next) => {
   const { userId, tipId } = req.body;
 
   User.findByIdAndUpdate(
@@ -33,10 +33,17 @@ router.put('/favorites', (req, res, next) => {
     { new: true }
   )
     .then(() => {
-      ChristmasTip.findByIdAndUpdate(tipId, {
-        $push: { favorites: userId },
+      ChristmasTip.findByIdAndUpdate(
+        tipId,
+        {
+          $push: { addedToFavorites: userId },
+        },
+        { new: true }
+      ).then((updatedTip) => {
+        console.log(updatedTip);
       });
     })
+
     .then(() => res.json(`Successfully added to favorites`))
     .catch((error) => res.json(error));
 });
@@ -52,8 +59,14 @@ router.put('/favorites/remove', (req, res, next) => {
     { new: true }
   )
     .then(() => {
-      ChristmasTip.findByIdAndUpdate(tipId, {
-        $pull: { favorites: userId },
+      ChristmasTip.findByIdAndUpdate(
+        tipId,
+        {
+          $pull: { addedToFavorites: userId },
+        },
+        { new: true }
+      ).then((updatedTip) => {
+        console.log(updatedTip);
       });
     })
     .then(() => res.json(`Successfully removed from favorites`))

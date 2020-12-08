@@ -22,8 +22,14 @@ router.post('/tips', (req, res, next) => {
       tipId = newTip._id;
     })
     .then(() => {
-      User.findByIdAndUpdate(author, {
-        $push: { tips: tipId },
+      User.findByIdAndUpdate(
+        author,
+        {
+          $push: { tips: tipId },
+        },
+        { new: true }
+      ).then((updatedUser) => {
+        console.log(updatedUser);
       });
     })
     .then(() =>
@@ -54,6 +60,13 @@ router.get('/tips/:id', (req, res, next) => {
   ChristmasTip.findById(id)
     .populate('author')
     .populate('comments')
+    .populate({
+      path: 'comments',
+      populate: {
+        path: 'author',
+        model: 'User',
+      },
+    })
     .then((foundTip) => {
       res.json(foundTip);
     })
@@ -98,7 +111,7 @@ router.delete('/tips/:id', (req, res, next) => {
     res.status(400).json({ message: 'Specified id is not valid' });
     return;
   }
-  //TO DO: DELETE FROM USER ARRAY AND DELETE COMMENTS FROM DB
+
   const { id } = req.params;
 
   ChristmasTip.findByIdAndRemove(id)

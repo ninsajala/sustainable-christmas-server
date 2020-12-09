@@ -50,7 +50,10 @@ app.locals.title = 'Sustainable Christmas - Server';
 app.use(
   cors({
     credentials: true,
-    origin: ['http://localhost:3000'],
+    origin: [
+      'http://localhost:3000',
+      `https://sustainable-christmas.netlify.app/`,
+    ],
     //Add Netlify url later
   })
 );

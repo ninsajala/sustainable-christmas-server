@@ -159,4 +159,35 @@ router.put('/follow', (req, res, next) => {
     .catch((error) => res.json(error));
 });
 
+router.put('/unfollow', (req, res, next) => {
+  const { myID, otherUserId } = req.body;
+
+  User.findByIdAndUpdate(
+    myID,
+    {
+      $pull: { following: otherUserId },
+    },
+    { new: true }
+  )
+    .populate('favorites')
+    .populate('tips')
+    .populate('following')
+    .then((updatedUser1) => {
+      User.findByIdAndUpdate(
+        otherUserId,
+        {
+          $pull: { followers: myID },
+        },
+        { new: true }
+      )
+        .populate('favorites')
+        .populate('tips')
+        .populate('following')
+        .then((updatedUser2) => {
+          res.send({ updatedUser1, updatedUser2 });
+        });
+    })
+    .catch((error) => res.json(error));
+});
+
 module.exports = router;

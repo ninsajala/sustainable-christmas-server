@@ -100,6 +100,15 @@ router.put('/tips/:id', (req, res, next) => {
     },
     { new: true }
   )
+    .populate('author')
+    .populate('comments')
+    .populate({
+      path: 'comments',
+      populate: {
+        path: 'author',
+        model: 'User',
+      },
+    })
     .then((updatedTip) => {
       res.status(200).json(updatedTip);
     })

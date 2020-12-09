@@ -129,7 +129,7 @@ router.delete('/user/:id', (req, res, next) => {
 });
 
 router.put('/follow', (req, res, next) => {
-  const { myId, otherUserId } = req.body;
+  const { myID, otherUserId } = req.body;
 
   User.findByIdAndUpdate(
     myID,

@@ -14,8 +14,8 @@ router.get('/user/:id', (req, res, next) => {
 
   User.findOne(id)
     .populate('tips')
-    .populate('comments')
     .populate('favorites')
+    .populate('following')
     .then((foundUser) => {
       res.status(200).json(foundUser);
     })
@@ -34,6 +34,7 @@ router.put('/favorites/add', (req, res, next) => {
   )
     .populate('favorites')
     .populate('tips')
+    .populate('following')
     .then((updatedUser) => {
       ChristmasTip.findByIdAndUpdate(
         tipId,
@@ -61,6 +62,7 @@ router.put('/favorites/remove', (req, res, next) => {
   )
     .populate('favorites')
     .populate('tips')
+    .populate('following')
     .then((updatedUser) => {
       ChristmasTip.findByIdAndUpdate(
         tipId,
@@ -104,6 +106,7 @@ router.put('/user/:id', (req, res, next) => {
   )
     .populate('favorites')
     .populate('tips')
+    .populate('following')
     .then((updatedUser) => {
       res.status(200).json(updatedUser);
     })
@@ -121,6 +124,37 @@ router.delete('/user/:id', (req, res, next) => {
   User.findByIdAndRemove(id)
     .then(() => {
       res.json({ message: 'Profile is successfully removed' });
+    })
+    .catch((error) => res.json(error));
+});
+
+router.put('/follow', (req, res, next) => {
+  const { myId, otherUserId } = req.body;
+
+  User.findByIdAndUpdate(
+    myID,
+    {
+      $push: { following: otherUserId },
+    },
+    { new: true }
+  )
+    .populate('favorites')
+    .populate('tips')
+    .populate('following')
+    .then((updatedUser1) => {
+      User.findByIdAndUpdate(
+        otherUserId,
+        {
+          $push: { followers: myID },
+        },
+        { new: true }
+      )
+        .populate('favorites')
+        .populate('tips')
+        .populate('following')
+        .then((updatedUser2) => {
+          res.send({ updatedUser1, updatedUser2 });
+        });
     })
     .catch((error) => res.json(error));
 });

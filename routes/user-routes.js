@@ -32,6 +32,8 @@ router.put('/favorites/add', (req, res, next) => {
     },
     { new: true }
   )
+    .populate('favorites')
+    .populate('tips')
     .then((updatedUser) => {
       ChristmasTip.findByIdAndUpdate(
         tipId,
@@ -57,6 +59,8 @@ router.put('/favorites/remove', (req, res, next) => {
     },
     { new: true }
   )
+    .populate('favorites')
+    .populate('tips')
     .then((updatedUser) => {
       ChristmasTip.findByIdAndUpdate(
         tipId,

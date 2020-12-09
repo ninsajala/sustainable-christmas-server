@@ -65,7 +65,7 @@ router.put('/favorites/remove', (req, res, next) => {
         },
         { new: true }
       ).then((updatedTip) => {
-        res.send(updatedUser)
+        res.send(updatedUser);
         console.log(updatedTip);
       });
     })
@@ -98,6 +98,8 @@ router.put('/user/:id', (req, res, next) => {
     },
     { new: true }
   )
+    .populate('favorites')
+    .populate('tips')
     .then((updatedUser) => {
       res.status(200).json(updatedUser);
     })

@@ -32,7 +32,7 @@ router.put('/favorites/add', (req, res, next) => {
     },
     { new: true }
   )
-    .then(() => {
+    .then((updatedUser) => {
       ChristmasTip.findByIdAndUpdate(
         tipId,
         {
@@ -40,11 +40,10 @@ router.put('/favorites/add', (req, res, next) => {
         },
         { new: true }
       ).then((updatedTip) => {
+        res.send(updatedUser);
         console.log(updatedTip);
       });
     })
-
-    .then(() => res.json(`Successfully added to favorites`))
     .catch((error) => res.json(error));
 });
 
@@ -58,7 +57,7 @@ router.put('/favorites/remove', (req, res, next) => {
     },
     { new: true }
   )
-    .then(() => {
+    .then((updatedUser) => {
       ChristmasTip.findByIdAndUpdate(
         tipId,
         {
@@ -66,10 +65,10 @@ router.put('/favorites/remove', (req, res, next) => {
         },
         { new: true }
       ).then((updatedTip) => {
+        res.send(updatedUser)
         console.log(updatedTip);
       });
     })
-    .then(() => res.json(`Successfully removed from favorites`))
     .catch((error) => res.json(error));
 });
 

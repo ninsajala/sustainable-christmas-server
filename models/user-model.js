@@ -12,6 +12,8 @@ const userSchema = new Schema(
     favorites: [{ type: Schema.Types.ObjectId, ref: 'ChristmasTip' }],
     tips: [{ type: Schema.Types.ObjectId, ref: 'ChristmasTip' }],
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
+    following: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    followers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   },
   {
     timestamps: true,

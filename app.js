@@ -50,7 +50,7 @@ app.locals.title = 'Sustainable Christmas - Server';
 app.use(
   cors({
     credentials: true,
-    origin: process.env.FRONTEND_POINT,
+    origin: ['https://sustainable-christmas.netlify.app/'],
   })
 );
 

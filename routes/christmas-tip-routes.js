@@ -28,6 +28,9 @@ router.post('/tips', (req, res, next) => {
           $push: { tips: tipId },
         },
         { new: true }
+          .populate('favorites')
+          .populate('tips')
+          .populate('following')
       ).then((updatedUser) => {
         ChristmasTip.findById(tipId)
           .populate('author')

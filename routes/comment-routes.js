@@ -34,10 +34,11 @@ router.post('/comment', (req, res, next) => {
           $push: { comments: commentID },
         },
         { new: true }
-      ).then((foundUser) =>
-        Comments.findById(id).then((foundComment) => {
-          res.send({ foundUser, foundComment });
-        })
+      ).then(
+        (foundUser) => res.send(foundUser)
+        // Comments.findById(id).then((foundComment) => {
+        //   res.send({ foundUser, foundComment });
+        // })
       )
     )
 

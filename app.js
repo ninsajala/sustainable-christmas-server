@@ -51,6 +51,7 @@ app.use(
   cors({
     credentials: true,
     origin: [
+      'https://www.sustainable-christmas.net',
       'https://sustainable-christmas.netlify.app',
       'http://localhost:3000',
     ],

@@ -10,9 +10,8 @@ router.get('/user/:id', (req, res, next) => {
     res.status(400).json({ message: 'Specified id is not valid' });
     return;
   }
-  const { id } = req.params;
 
-  User.findById(id)
+  User.findById(req.params.id)
     .populate('tips')
     .populate('favorites')
     .populate('following')

@@ -65,10 +65,13 @@ router.post('/signup', (req, res, next) => {
       firstName,
       lastName,
       about: '',
-      picture: '',
+      picture:
+        'https://res.cloudinary.com/ddudasjs9/image/upload/v1607536663/sustainable-christmas/file_g8qeps.png',
       favorites: [],
       tips: [],
       comments: [],
+      following: [],
+      followers: [],
     });
 
     newUser.save((err) => {

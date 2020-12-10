@@ -29,25 +29,21 @@ router.post('/tips', (req, res, next) => {
         },
         { new: true }
       ).then((updatedUser) => {
-        console.log(updatedUser);
+        ChristmasTip.findById(tipId)
+          .populate('author')
+          .populate('comments')
+          .populate({
+            path: 'comments',
+            populate: {
+              path: 'author',
+              model: 'User',
+            },
+          })
+          .then((foundTip) => {
+            res.send({ foundTip, updatedUser });
+          });
       });
     })
-    .then(() =>
-      ChristmasTip.findById(tipId)
-        .populate('author')
-        .populate('comments')
-        .populate({
-          path: 'comments',
-          populate: {
-            path: 'author',
-            model: 'User',
-          },
-        })
-        .then((foundTip) => {
-          console.log(foundTip);
-          res.json(foundTip);
-        })
-    )
     .catch((error) => res.json(error));
 });
 

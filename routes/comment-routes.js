@@ -34,13 +34,13 @@ router.post('/comment', (req, res, next) => {
           $push: { comments: commentID },
         },
         { new: true }
+      ).then((foundUser) =>
+        Comments.findById(id).then((foundComment) => {
+          res.send({ foundUser, foundComment });
+        })
       )
     )
-    .then(() =>
-      Comments.findById(id).then((foundComment) => {
-        res.json(foundComment);
-      })
-    )
+
     .catch((error) => res.json(error));
 });
 

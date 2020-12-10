@@ -16,7 +16,8 @@ passport.deserializeUser((userIdFromSession, cb) => {
     cb(null, userDocument);
   })
     .populate('tips')
-    .populate('favorites');
+    .populate('favorites')
+    .populate('following');
 });
 
 // Passport LocalStrategy
@@ -31,8 +32,8 @@ passport.use(
         email,
       })
         .populate('tips')
-        .populate('comments')
         .populate('favorites')
+        .populate('following')
         .then((user) => {
           if (!user) {
             return next(null, false, {

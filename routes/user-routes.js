@@ -12,12 +12,12 @@ router.get('/user/:id', (req, res, next) => {
   }
   const { id } = req.params;
 
-  User.findOne(id)
+  User.findById(id)
     .populate('tips')
     .populate('favorites')
     .populate('following')
     .then((foundUser) => {
-      res.status(200).json(foundUser);
+      res.json(foundUser);
     })
     .catch((error) => res.json(error));
 });

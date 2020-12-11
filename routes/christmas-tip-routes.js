@@ -28,9 +28,6 @@ router.post('/tips', (req, res, next) => {
     addedToFavorites: [],
   })
     .then((newTip) => {
-      tipId = newTip._id;
-    })
-    .then(() => {
       User.findByIdAndUpdate(
         author,
         {
@@ -41,7 +38,7 @@ router.post('/tips', (req, res, next) => {
           .populate('tips')
           .populate('following')
       ).then((updatedUser) => {
-        ChristmasTip.findById(tipId)
+        ChristmasTip.findById(newTip._id)
           .populate('author')
           .populate('comments')
           .populate({

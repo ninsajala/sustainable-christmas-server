@@ -11,7 +11,7 @@ router.post('/tips', (req, res, next) => {
 
   let sendPicture;
 
-  if (!picutre) {
+  if (!picture) {
     sendPicture = `https://res.cloudinary.com/ddudasjs9/image/upload/v1607674804/photo-1480442646297-37901d5ea815_ofczba.jpg`;
   } else {
     sendPicture = picture;

@@ -7,7 +7,6 @@ const User = require('../models/user-model');
 
 router.post('/tips', (req, res, next) => {
   const { title, content, picture, category, author, extraInfo } = req.body;
-  let tipId;
 
   ChristmasTip.create({
     title,
@@ -30,9 +29,9 @@ router.post('/tips', (req, res, next) => {
     })
     .then((foundTip) => {
       User.findByIdAndUpdate(
-        author,
+        author._id,
         {
-          $push: { tips: tipId },
+          $push: { tips: foundTip._id },
         },
         { new: true }
           .populate('favorites')

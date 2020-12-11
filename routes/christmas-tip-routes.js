@@ -9,14 +9,18 @@ router.post('/tips', (req, res, next) => {
   const { title, content, picture, category, author, extraInfo } = req.body;
   let tipId;
 
-  if (!picture) {
-    return (picture = `https://res.cloudinary.com/ddudasjs9/image/upload/v1607674804/photo-1480442646297-37901d5ea815_ofczba.jpg`);
+  let sendPicture;
+
+  if (!picutre) {
+    sendPicture = `https://res.cloudinary.com/ddudasjs9/image/upload/v1607674804/photo-1480442646297-37901d5ea815_ofczba.jpg`;
+  } else {
+    sendPicture = picture;
   }
 
   ChristmasTip.create({
     title,
     content,
-    picture,
+    picture: sendPicture,
     category,
     author,
     extraInfo,

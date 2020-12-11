@@ -7,6 +7,7 @@ const User = require('../models/user-model');
 
 router.post('/tips', (req, res, next) => {
   const { title, content, picture, category, author, extraInfo } = req.body;
+  let tipId;
 
   ChristmasTip.create({
     title,
@@ -18,29 +19,37 @@ router.post('/tips', (req, res, next) => {
     comments: [],
     addedToFavorites: [],
   })
-    .populate('author')
-    .populate('comments')
-    .populate({
-      path: 'comments',
-      populate: {
-        path: 'author',
-        model: 'User',
-      },
+    .then((newTip) => {
+      console.log(newTip);
+      tipId = newTip._id;
     })
-    .then((foundTip) => {
+    .then(() => {
       User.findByIdAndUpdate(
-        author._id,
+        author,
         {
-          $push: { tips: foundTip._id },
+          $push: { tips: tipId },
         },
         { new: true }
-          .populate('favorites')
-          .populate('tips')
-          .populate('following')
-      ).then((updatedUser) => {
-        console.log(foundTip, updatedUser);
-        res.send({ foundTip, updatedUser });
-      });
+      )
+        .populate('favorites')
+        .populate('tips')
+        .populate('following')
+        .then((updatedUser) => {
+          ChristmasTip.findById(tipId)
+            .populate('author')
+            .populate('comments')
+            .populate({
+              path: 'comments',
+              populate: {
+                path: 'author',
+                model: 'User',
+              },
+            })
+            .then((foundTip) => {
+              console.log(foundTip, updatedUser);
+              res.send({ foundTip, updatedUser });
+            });
+        });
     })
     .catch((error) => res.json(error));
 });

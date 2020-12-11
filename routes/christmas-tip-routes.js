@@ -19,10 +19,16 @@ router.post('/tips', (req, res, next) => {
     comments: [],
     addedToFavorites: [],
   })
-    .then((newTip) => {
-      tipId = newTip._id;
+    .populate('author')
+    .populate('comments')
+    .populate({
+      path: 'comments',
+      populate: {
+        path: 'author',
+        model: 'User',
+      },
     })
-    .then(() => {
+    .then((foundTip) => {
       User.findByIdAndUpdate(
         author,
         {
@@ -33,19 +39,8 @@ router.post('/tips', (req, res, next) => {
           .populate('tips')
           .populate('following')
       ).then((updatedUser) => {
-        ChristmasTip.findById(tipId)
-          .populate('author')
-          .populate('comments')
-          .populate({
-            path: 'comments',
-            populate: {
-              path: 'author',
-              model: 'User',
-            },
-          })
-          .then((foundTip) => {
-            res.send({ foundTip, updatedUser });
-          });
+        console.log(foundTip, updatedUser);
+        res.send({ foundTip, updatedUser });
       });
     })
     .catch((error) => res.json(error));

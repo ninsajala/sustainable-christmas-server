@@ -9,18 +9,10 @@ router.post('/tips', (req, res, next) => {
   const { title, content, picture, category, author, extraInfo } = req.body;
   let tipId;
 
-  let sendPicture;
-
-  if (!picture) {
-    sendPicture = `https://res.cloudinary.com/ddudasjs9/image/upload/v1607674804/photo-1480442646297-37901d5ea815_ofczba.jpg`;
-  } else {
-    sendPicture = picture;
-  }
-
   ChristmasTip.create({
     title,
     content,
-    picture: sendPicture,
+    picture,
     category,
     author,
     extraInfo,
@@ -28,6 +20,9 @@ router.post('/tips', (req, res, next) => {
     addedToFavorites: [],
   })
     .then((newTip) => {
+      tipId = newTip._id;
+    })
+    .then(() => {
       User.findByIdAndUpdate(
         author,
         {
@@ -38,7 +33,7 @@ router.post('/tips', (req, res, next) => {
           .populate('tips')
           .populate('following')
       ).then((updatedUser) => {
-        ChristmasTip.findById(newTip._id)
+        ChristmasTip.findById(tipId)
           .populate('author')
           .populate('comments')
           .populate({

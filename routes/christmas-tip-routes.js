@@ -8,11 +8,18 @@ const User = require('../models/user-model');
 router.post('/tips', (req, res, next) => {
   const { title, content, picture, category, author, extraInfo } = req.body;
   let tipId;
+  let newPicture;
+
+  if (!picture) {
+    newPicture = `https://res.cloudinary.com/ddudasjs9/image/upload/v1607674804/photo-1480442646297-37901d5ea815_ofczba.jpg`;
+  } else {
+    newPicture = picture;
+  }
 
   ChristmasTip.create({
     title,
     content,
-    picture,
+    picture: newPicture,
     category,
     author,
     extraInfo,

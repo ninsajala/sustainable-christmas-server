@@ -34,7 +34,11 @@ router.post('/comment', (req, res, next) => {
           $push: { comments: commentID },
         },
         { new: true }
-      ).then((foundUser) => res.send(foundUser))
+      )
+        .populate('tips')
+        .populate('favorites')
+        .populate('following')
+        .then((foundUser) => res.send(foundUser))
     )
 
     .catch((error) => res.json(error));

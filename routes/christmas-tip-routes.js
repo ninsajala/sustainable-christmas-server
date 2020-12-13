@@ -142,10 +142,17 @@ router.delete('/tips/:id', (req, res, next) => {
   }
 
   const { id } = req.params;
+  const { userID } = req.body;
 
   ChristmasTip.findByIdAndRemove(id)
     .then(() => {
-      res.json({ message: 'Tip is successfully removed' });
+      User.findById(userID);
+    })
+    .populate('tips')
+    .populate('favorites')
+    .populate('following')
+    .then((updatedUser) => {
+      res.json({ updatedUser, message: 'Tip is successfully removed' });
     })
     .catch((error) => res.json(error));
 });
